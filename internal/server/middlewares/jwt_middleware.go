@@ -4,6 +4,7 @@ import (
 	"cloud/internal/server/auth"
 	"context"
 	"net/http"
+	"time"
 )
 
 func UserMiddleware(next http.Handler) http.Handler {
@@ -23,7 +24,14 @@ func UserMiddleware(next http.Handler) http.Handler {
 
 		userID, err := auth.ValidateToken(cookie.Value)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
+			http.SetCookie(w, &http.Cookie{
+				Name:     "token",
+				Value:    "",
+				Expires:  time.Unix(0, 0),
+				HttpOnly: true,
+				Path:     "/",
+			})
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 

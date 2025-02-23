@@ -101,19 +101,23 @@
             });
     }
 
-    function checkTokenExpiration() {
-        const expiresAt = localStorage.getItem("expires_at");
-
-        if (!expiresAt || Date.now() > parseInt(expiresAt)) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("expires_at");
-            alert("Срок действия токена истек. Войдите заново.");
-            window.location.href = "/login";
-        }
+    function checkToken() {
+        fetch("/check-auth", { method: "GET", credentials: "include" })
+            .then(response => {
+                if (!response.ok) {
+                    alert("Срок действия токена истёк. Войдите заново.");
+                    window.location.href = "/login";
+                }
+            })
+            .catch(() => {
+                alert("Ошибка проверки токена. Войдите заново.");
+                window.location.href = "/login";
+            });
     }
 
-    setInterval(checkTokenExpiration, 5 * 60 * 1000); // Проверка каждые 5 минут
-    checkTokenExpiration();
+    setInterval(checkToken, 5 * 60 * 1000); // Проверка каждые 5 минут
+    checkToken();
+
 </script>
 
 </body>
