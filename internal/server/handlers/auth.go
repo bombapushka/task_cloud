@@ -26,9 +26,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	//db := storage.GetDB()
+	db := storage.GetDB()
 
-	userID, passwordHash, err := storage.GetUserByUsername(username)
+	userID, passwordHash, err := storage.GetUserByUsername(db, username)
 	if err != nil || !utils.CheckPasswordHash(password, passwordHash) {
 		data := map[string]interface{}{
 			"Error": "Неверное имя пользователя или пароль",
@@ -95,9 +95,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//db := storage.GetDB()
+	db := storage.GetDB()
 
-	if err := storage.CreateUser(username, hashedPassword); err != nil {
+	if err := storage.CreateUser(db, username, hashedPassword); err != nil {
 		log.Println("Пользователь уже существует:", err)
 		data := map[string]interface{}{
 			"Error": "Пользователь уже существует",
@@ -106,7 +106,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, _, err := storage.GetUserByUsername(username)
+	userID, _, err := storage.GetUserByUsername(db, username)
 	if err != nil {
 		data := map[string]interface{}{
 			"Error": "Ошибка в имени пользователя или пароли",

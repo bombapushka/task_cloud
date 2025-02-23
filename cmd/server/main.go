@@ -10,7 +10,7 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
-	err := storage.InitDB("database.db")
+	err := storage.InitDB()
 	if err != nil {
 		log.Fatal("Ошибка инициализации БД:", err)
 	}

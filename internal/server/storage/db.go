@@ -58,8 +58,7 @@ func GetDB() *sql.DB {
 	return db
 }
 
-// GetUserByUsername ищет пользователя в БД по username
-func GetUserByUsername(username string) (int, string, error) {
+func GetUserByUsername(db *sql.DB, username string) (int, string, error) {
 	var id int
 	var passwordHash string
 	query := `SELECT id, password_hash FROM users WHERE username = $1`
@@ -70,8 +69,7 @@ func GetUserByUsername(username string) (int, string, error) {
 	return id, passwordHash, nil
 }
 
-// CreateUser добавляет нового пользователя в БД
-func CreateUser(username string, passwordHash string) error {
+func CreateUser(db *sql.DB, username string, passwordHash string) error {
 	_, err := db.Exec("INSERT INTO users (username, password_hash) VALUES ($1, $2)", username, passwordHash)
 	return err
 }
