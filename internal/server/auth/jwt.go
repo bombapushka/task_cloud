@@ -12,13 +12,12 @@ import (
 var jwtSecret []byte
 
 func init() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal("Ошибка загрузки .env файла")
-	}
+	_ = godotenv.Load() // Загружаем .env, если есть, но не ругаемся, если нет
 
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		log.Fatal("JWT_SECRET не найден в .env")
+		log.Println("⚠️ Внимание: JWT_SECRET не найден в .env, проверь переменные окружения!")
+		secret = "default_secret" // Установи значение по умолчанию или выйди с ошибкой
 	}
 
 	jwtSecret = []byte(secret)

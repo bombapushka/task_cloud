@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
@@ -11,12 +10,12 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln("Ошибка загрузки .env файла:", err)
-	}
+	_ = godotenv.Load() // Просто пробуем загрузить .env, но не паникуем
 
 	uploadsDir := os.Getenv("UPLOADS_DIR")
+	if uploadsDir == "" {
+		uploadsDir = "uploads" // Значение по умолчанию
+	}
 
 	return &Config{
 		UploadsDir: uploadsDir,
