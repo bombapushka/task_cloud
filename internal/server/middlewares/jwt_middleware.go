@@ -33,6 +33,7 @@ func UserMiddleware(next http.Handler) http.Handler {
 			})
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
+
 		}
 
 		ctx := context.WithValue(r.Context(), "userID", userID)
