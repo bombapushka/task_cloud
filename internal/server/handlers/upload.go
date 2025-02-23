@@ -35,8 +35,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	// Проверяем токен и получаем userID
 	userID, err := auth.ValidateToken(cookie.Value)
 	if err != nil {
-		http.Error(w, "Ошибка валидации токена", http.StatusUnauthorized)
-		return
+		http.Redirect(w, r, "/login", http.StatusFound)
 	}
 
 	// Создаём папку для пользователя

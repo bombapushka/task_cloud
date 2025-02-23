@@ -28,8 +28,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	// Получаем userID
 	userID, err := auth.ValidateToken(cookie.Value)
 	if err != nil {
-		http.Error(w, "Ошибка валидации токена", http.StatusUnauthorized)
-		return
+		http.Redirect(w, r, "/login", http.StatusFound)
 	}
 
 	userDir := filepath.Join(cfg.UploadsDir, fmt.Sprintf("%d", userID))
