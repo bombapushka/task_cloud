@@ -44,6 +44,7 @@ func ValidateToken(tokenString string) (int, error) {
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
+
 		return 0, errors.New("неверный формат claims")
 	}
 

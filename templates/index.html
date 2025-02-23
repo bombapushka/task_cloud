@@ -7,18 +7,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
             padding: 0;
             background-color: #f4f4f4;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         .container {
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            text-align: left;
+            width: 90%;
+            max-width: 400px;
         }
         .logout {
             position: absolute;
@@ -37,22 +42,49 @@
         form {
             margin-bottom: 20px;
         }
+        input[type="file"] {
+            width: 100%;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+        ul li {
+            margin: 5px 0;
+        }
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
+
 <button class="logout" onclick="logout()">Выход</button>
 
 <div class="container">
     <h2>Загрузите файл</h2>
     <form action="/upload" method="post" enctype="multipart/form-data">
-    <label>Выберите файл:</label>
+        <label>Выберите файл:</label>
         <input type="file" name="file" required>
         <br><br>
         <input type="submit" value="Загрузить">
     </form>
 
     <h2>Доступные файлы</h2>
-    <ul>
+    <ul id="file-list">
         {{range .Files}}
         <li><a href="/download?filename={{.}}">{{.}}</a></li>
         {{end}}
@@ -62,8 +94,27 @@
 <script>
     function logout() {
         fetch("/logout", { method: "POST" })
-                .then(() => window.location.href = "/login");
+            .then(() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("expires_at");
+                window.location.href = "/login";
+            });
     }
+
+    function checkTokenExpiration() {
+        const expiresAt = localStorage.getItem("expires_at");
+
+        if (!expiresAt || Date.now() > parseInt(expiresAt)) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("expires_at");
+            alert("Срок действия токена истек. Войдите заново.");
+            window.location.href = "/login";
+        }
+    }
+
+    setInterval(checkTokenExpiration, 5 * 60 * 1000); // Проверка каждые 5 минут
+    checkTokenExpiration();
 </script>
+
 </body>
 </html>
