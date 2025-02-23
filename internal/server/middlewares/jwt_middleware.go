@@ -16,7 +16,7 @@ func UserMiddleware(next http.Handler) http.Handler {
 
 		cookie, err := r.Cookie("token")
 		if err != nil {
-			http.Error(w, "Токен отсутствует", http.StatusUnauthorized)
+			//http.Error(w, "Токен отсутствует", http.StatusUnauthorized)
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
