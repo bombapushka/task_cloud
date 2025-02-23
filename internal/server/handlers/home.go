@@ -34,6 +34,14 @@ func HomeHandler(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 
 	userDir := filepath.Join(cfg.UploadsDir, fmt.Sprintf("%d", userID))
 
+	if _, err := os.Stat(userDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(userDir, 0755); err != nil {
+			log.Println("Ошибка создания папки:", err)
+			http.Error(w, "Ошибка на сервере", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	// Получаем список файлов
 	files, err := os.ReadDir(userDir)
 	if err != nil {
